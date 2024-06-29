@@ -1,14 +1,15 @@
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, TextInput, Button } from "react-native";
+import { useState } from "react";
 
 import FoodListItem from "./components/FoodListItem";
 
 const foodItems = [
-  {label: 'Poop', calories: 500, brand: 'Dominos'},
-  {label: 'Diarrhea', calories: 346, brand: 'Popeyes'},
-  {label: 'Huge Shit', calories: 35, brand: 'Starbucks'}
-]
+  { label: "Poop", calories: 500, brand: "Dominos" },
+  { label: "Diarrhea", calories: 346, brand: "Popeyes" },
+  { label: "Huge Shit", calories: 35, brand: "Starbucks" },
+];
 
 // function handleFoodItemRender(foodItems){
 //   foodItems.map((foodItem) => (
@@ -17,15 +18,29 @@ const foodItems = [
 // }
 
 export default function App() {
-  return <View style={styles.container}>
+  const [search, setSearch] = useState("");
 
-    <FlatList 
-    data={foodItems}
-    renderItem={({item}) => <FoodListItem item={item} />}
-    contentContainerStyle={{gap: 7}}
-    
-    />
-  </View>;
+  const performSearch = () => {
+    console.warn('Searching for: ', search);
+    setSearch('');
+  }
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        value={search}
+        onChangeText={setSearch}
+        placeholder="search"
+        style={styles.input}
+      />
+      {search && <Button title="Search" onPress={performSearch}/>}
+      <FlatList
+        data={foodItems}
+        renderItem={({ item }) => <FoodListItem item={item} />}
+        contentContainerStyle={{ gap: 7 }}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -34,5 +49,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
     gap: 7,
+  },
+  input: {
+    backgroundColor: "gainsboro",
+    borderRadius: 15,
+    padding: 10,
   },
 });
