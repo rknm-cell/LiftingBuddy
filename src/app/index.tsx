@@ -1,9 +1,29 @@
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, FlatList, TextInput, Button } from "react-native";
+import { StyleSheet, Text, View, FlatList, TextInput, Button, ActivityIndicator } from "react-native";
 import { useState } from "react";
 
 import FoodListItem from "./components/FoodListItem";
+import {gql, useLazyQuery} from '@apollo/client';
+
+const query = gql`
+query search($ingr: String) {
+  search(ingr: $ingr) {
+    text
+    hints {
+      food {
+        brand
+        label
+        foodId
+        nutrients {
+          ENERC_KCAL
+        }
+      }
+    }
+  }
+}
+`
+
 
 const foodItems = [
   { label: "Poop", calories: 500, brand: "Dominos" },
@@ -17,13 +37,22 @@ const foodItems = [
 //   ))
 // }
 
-export default function App() {
+export default function SearchScreen() {
   const [search, setSearch] = useState("");
 
+  const [runSearch, {data, loading, error}] = useLazyQuery(query, {variables: {ingr: 'Pizza'}});
+
   const performSearch = () => {
-    console.warn('Searching for: ', search);
+    runSearch({variables: {ingr: search}});
     setSearch('');
   }
+  
+console.log(error)
+  if (error) {
+    return <Text>Failed to search</Text>
+  };
+
+ const items = data?.search?.hints || [];
 
   return (
     <View style={styles.container}>
@@ -34,9 +63,12 @@ export default function App() {
         style={styles.input}
       />
       {search && <Button title="Search" onPress={performSearch}/>}
+
+      {loading && <ActivityIndicator />}
       <FlatList
-        data={foodItems}
+        data={items}
         renderItem={({ item }) => <FoodListItem item={item} />}
+        ListEmptyComponent={() => <Text>Search a food here</Text>}
         contentContainerStyle={{ gap: 7 }}
       />
     </View>

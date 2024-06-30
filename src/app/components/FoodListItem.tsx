@@ -8,9 +8,9 @@ const FoodListItem = ({item}) => {
           style={styles.container}
         >
           <View style={{ flex: 1, gap: 5 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 20 }}>{item.label}</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>{item.food.label}</Text>
             <Text style={{ color: "gray", fontSize: 16 }}>
-              {item.calories} Calories, {item.brand}
+              {item.food.nutrients.ENERC_KCAL} Cal {item.food.brand}
             </Text>
           </View>
           <MaterialIcons name="add-circle-outline" size={30} color="green" />
